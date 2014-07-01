@@ -4,7 +4,11 @@
 # 
 import time
 
-def pfs(n, max_prime = 10000):
+# I modified this code from a previous problem to set an upper limit on the prime factorization. There's no need to get
+# all of the primes, but I want to have a large enough number to increment so that the code doesn't take forever.
+# Incidentally, there seems to be a tradeoff in the value of max_prime, with the best value being around 100. It
+# increases the time spent running the code if I decrease or increase much more.
+def pfs(n, max_prime = 50):
         maxn = int(n**0.5)
         base = n
         pfs = []
