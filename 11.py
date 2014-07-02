@@ -24,16 +24,67 @@ grid = [
 [20,73,35,29,78,31,90,1,74,31,49,71,48,86,81,16,23,57,5,54],
 [1,70,54,71,83,51,54,69,16,92,33,48,61,43,52,1,89,19,67,48]]
 
-def check_grid(grid,4):
+def checkleft(grid,i,j):
+	try:
+		return grid[i,j]*grid[i-1,j]*grid[i-2,j]*grid[i-3,j]
+	except:
+		return 0
+
+def checkright(grid,i,j):
+	try:
+		return grid[i][j]*grid[i+1][j]*grid[i+2][j]*grid[i+3][j]
+	except:
+		return 0
+
+def checkup(grid,i,j):
+	try:
+		return grid[i][j]*grid[i][j+1]*grid[i][j+2]*grid[i][j+3]
+	except:
+		return 0
+
+def checkdown(grid,i,j):
+	try:
+		return grid[i][j]*grid[i][j-1]*grid[i][j-2]*grid[i][j-3]
+	except:
+		return 0
+
+def checkne(grid,i,j):
+	try:
+		return grid[i][j]*grid[i+1][j+1]*grid[i+2][j+2]*grid[i+3][j+3]
+	except:
+		return 0
+
+def checksw(grid,i,j):
+	try:
+		return grid[i][j]*grid[i-1][j-1]*grid[i-2][j-2]*grid[i-3][j-3]
+	except:
+		return 0
+
+def checknw(grid,i,j):
+	try:
+		return grid[i][j]*grid[i-1][j+1]*grid[i-2][j+2]*grid[i-3][j+3]
+	except:
+		return 0
+
+def checkse(grid,i,j):
+	try:
+		return grid[i][j]*grid[i+1][j-1]*grid[i+2][j-2]*grid[i+3][j-3]
+	except:
+		return 0
+
+print len(grid), len(grid[0])
+def check_grid(grid):
 	nums = []
 	for i in range(len(grid)):
 		for j in range(len(grid[0])):
-			if i > 4 & j > 4 & i < n-4 & j < n-4:
-				nums.append(checkleft())
-				nums.append(checkright())
-				nums.append(checkdown())
-				nums.append(checkne())
-				nums.append(checknw())
-				nums.append(checkse())
-				nums.append(checksw())
-	return m
+			nums.append(checkleft(grid,i,j))
+			nums.append(checkright(grid,i,j))
+			nums.append(checkdown(grid,i,j))
+			nums.append(checkup(grid,i,j))
+			nums.append(checkne(grid,i,j))
+			nums.append(checknw(grid,i,j))
+			nums.append(checkse(grid,i,j))
+			nums.append(checksw(grid,i,j))
+	return max(nums)
+
+print check_grid(grid)
