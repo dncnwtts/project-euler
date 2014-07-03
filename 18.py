@@ -27,6 +27,7 @@
 ##  
 ##  NOTE: As there are only 16384 routes, it is possible to solve this problem by trying every route. However, Problem 67, is the same challenge with a triangle containing one-hundred rows; it cannot be solved by brute force, and requires a clever method! ;o)
 ##  
+import time
 
 test = [
 [3],
@@ -38,33 +39,105 @@ test = [
 # you can either move to the right, or keep the same value. We can just make
 # these 2**n arrays of True/False values, and then use them to create the sums.
 
-n = 4
-paths = [ [True]*n]*n
-#for i in range(n):
-	#pnew = list(paths[0])
-	#pnew[i] = not pnew[i]
-	#paths.append(pnew)
+# I'm also considering a recursive solution, where if we have k Trues to assign,
+# we can loop over the n potential slots, then call the same function again for
+# k-1 Trues to assign over n-1 potential slots (with the assigned slot removed).
+	
+def return_all_paths(n, depth=1, verbose=False):
+	all_paths = [[True]*n ] + [[False]*n]
+	for k in range(1,n)[::-1]:
+		if k == 1:
+			paths = []
+			for i in range(n):
+				path = [False]*n
+				path[i] = True
+				paths.append(path)
+			return paths
+		else:
+			for i in range(k):
+				#print 'Entering level {0}'.format(depth+1)
+				sub_paths = return_all_paths(n-1,depth=depth+1)
+				for j in range(len(sub_paths)):
+					sub_paths[j].insert(i, True)
+				all_paths += sub_paths
+			if len(all_paths) > 57922 and verbose == True:
+				print len(all_paths)	
+				#time.sleep(1)
+				#print all_paths
+			#raw_input('Press enter to continue')
+		return all_paths
+# To insert into an existing list at a position, use (for example)
+##  >>> x = [1,2,3,4,5]
+##  >>> x.insert(2,'insertion')
+##  >>> print(x)
+##  [1, 2, 'insertion', 3, 4, 5]
 
-def fact(n):
-	if n == 1 or n == 0:
-		return 1
-	else:
-		return n*fact(n-1)
 
-def choose(n,k):
-	return fact(n)/(fact(k)*fact(n-k))
+def max_sum(grid, verbose=False):
+	bool_array = return_all_paths(len(grid)-1, verbose=verbose)
+	if verbose:
+		print 'Finished boolean array'
+	
+	path_indices = []
+	for i in range(len(bool_array)):
+		path_indices.append([(0,0)])
+		n = 0
+		for j in range(len(bool_array[i])):
+			if bool_array[i][j]:
+				n += 1
+			path_indices[i].append( (n,j+1))
+	if verbose:
+		print 'Created path indices'
+	
+	max_sum = 0
+	for path in path_indices:
+		s = 0
+		for i in range(len(grid)):
+			s += grid[path[i][1]][path[i][0]]
+		if s > max_sum:
+			max_sum = s
+	
+	return max_sum
 
-# Consider instead...we need to generate all tuples of length k \leq n. We
-# should always have n choose k possibilities every step of the way.
-for k in range(n+ 1):
-	inds = range(choose(n,k))
-	print inds
-		
-
-print paths
-# all true
-# all one false possibilities
-# ...
-# all n/2 false possibilities, negate everything after that.
-
+test_answer = max_sum(test)	
+	
 assert test_answer == 23, "I got {0} instead".format(test_answer)
+
+grid = [
+[75],
+[95,64],
+[17,47,82],
+[18,35,87,10],
+[20,4,82,47,65],
+[19,1,23,75,3,34],
+[88,2,77,73,7,63,67],
+[99,65,4,28,6,16,70,92],
+[41,41,26,56,83,40,80,70,33],
+[41,48,72,33,47,32,37,16,94,29],
+[53,71,44,65,25,43,91,52,97,51,14],
+[70,11,33,28,77,73,17,78,39,68,17,57],
+[91,71,52,38,17,14,91,43,58,50,27,29,48],
+[63,66,4,68,89,53,67,30,73,16,69,87,40,31],
+[4,62,98,27,23,9,70,98,73,93,38,53,60,4,23]]
+
+grid = [
+[75],
+[95,64],
+[17,47,82],
+[18,35,87,10],
+[20,4,82,47,65],
+[19,1,23,75,3,34],
+[88,2,77,73,7,63,67],
+[99,65,4,28,6,16,70,92],
+[41,41,26,56,83,40,80,70,33],
+[41,48,72,33,47,32,37,16,94,29],
+[53,71,44,65,25,43,91,52,97,51,14],
+[70,11,33,28,77,73,17,78,39,68,17,57]]
+#[91,71,52,38,17,14,91,43,58,50,27,29,48],
+#[63,66,4,68,89,53,67,30,73,16,69,87,40,31],
+#[4,62,98,27,23,9,70,98,73,93,38,53,60,4,23]]
+
+t0 = time.time()
+answer = max_sum(grid, verbose=True)
+t = time.time()
+print answer, "Took me {0} seconds".format(t-t0)
