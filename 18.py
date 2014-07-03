@@ -38,4 +38,33 @@ test = [
 # you can either move to the right, or keep the same value. We can just make
 # these 2**n arrays of True/False values, and then use them to create the sums.
 
+n = 4
+paths = [ [True]*n]*n
+#for i in range(n):
+	#pnew = list(paths[0])
+	#pnew[i] = not pnew[i]
+	#paths.append(pnew)
 
+def fact(n):
+	if n == 1 or n == 0:
+		return 1
+	else:
+		return n*fact(n-1)
+
+def choose(n,k):
+	return fact(n)/(fact(k)*fact(n-k))
+
+# Consider instead...we need to generate all tuples of length k \leq n. We
+# should always have n choose k possibilities every step of the way.
+for k in range(n+ 1):
+	inds = range(choose(n,k))
+	print inds
+		
+
+print paths
+# all true
+# all one false possibilities
+# ...
+# all n/2 false possibilities, negate everything after that.
+
+assert test_answer == 23, "I got {0} instead".format(test_answer)
