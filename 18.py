@@ -43,8 +43,9 @@ test = [
 # we can loop over the n potential slots, then call the same function again for
 # k-1 Trues to assign over n-1 potential slots (with the assigned slot removed).
 	
-def return_all_paths(n, depth=1, verbose=False):
+def _return_all_paths(n, depth=1, verbose=False):
 	all_paths = [[True]*n ] + [[False]*n]
+	#all_paths = []
 	for k in range(1,n)[::-1]:
 		if k == 1:
 			paths = []
@@ -55,17 +56,36 @@ def return_all_paths(n, depth=1, verbose=False):
 			return paths
 		else:
 			for i in range(k):
+				#print n,k
 				#print 'Entering level {0}'.format(depth+1)
-				sub_paths = return_all_paths(n-1,depth=depth+1)
+				sub_paths = return_all_paths(n-1,depth=depth+1, verbose=verbose)
 				for j in range(len(sub_paths)):
 					sub_paths[j].insert(i, True)
 				all_paths += sub_paths
-			if len(all_paths) > 57922 and verbose == True:
-				print len(all_paths)	
-				#time.sleep(1)
-				#print all_paths
-			#raw_input('Press enter to continue')
+			if verbose:
+				if len(all_paths) > 57922:
+					print len(all_paths)	
+					#time.sleep(1)
+					#print all_paths
+			return all_paths
+
+def return_all_paths(n, depth=1,verbose=False):
+	all_paths = []
+	if n == 1:
+		paths = [[True],[False]]
+		return paths
+	else:
+		true_paths = return_all_paths(n-1,depth=depth+1,verbose=verbose)
+		for path in true_paths:
+			path.append(True)
+			all_paths.append(path)
+
+		false_paths = return_all_paths(n-1,depth=depth+1,verbose=verbose)
+		for path in false_paths:
+			path.append(False)
+			all_paths.append(path)
 		return all_paths
+
 # To insert into an existing list at a position, use (for example)
 ##  >>> x = [1,2,3,4,5]
 ##  >>> x.insert(2,'insertion')
@@ -77,6 +97,8 @@ def max_sum(grid, verbose=False):
 	bool_array = return_all_paths(len(grid)-1, verbose=verbose)
 	if verbose:
 		print 'Finished boolean array'
+		#print bool_array
+		print 'Output boolean array length was {0}'.format(len(bool_array))
 	
 	path_indices = []
 	for i in range(len(bool_array)):
@@ -86,9 +108,8 @@ def max_sum(grid, verbose=False):
 			if bool_array[i][j]:
 				n += 1
 			path_indices[i].append( (n,j+1))
-	if verbose:
-		print 'Created path indices'
-	
+	if verbose: print 'Created path indices'
+
 	max_sum = 0
 	for path in path_indices:
 		s = 0
@@ -99,8 +120,7 @@ def max_sum(grid, verbose=False):
 	
 	return max_sum
 
-test_answer = max_sum(test)	
-	
+test_answer = max_sum(test, verbose=False)
 assert test_answer == 23, "I got {0} instead".format(test_answer)
 
 grid = [
@@ -119,23 +139,6 @@ grid = [
 [91,71,52,38,17,14,91,43,58,50,27,29,48],
 [63,66,4,68,89,53,67,30,73,16,69,87,40,31],
 [4,62,98,27,23,9,70,98,73,93,38,53,60,4,23]]
-
-grid = [
-[75],
-[95,64],
-[17,47,82],
-[18,35,87,10],
-[20,4,82,47,65],
-[19,1,23,75,3,34],
-[88,2,77,73,7,63,67],
-[99,65,4,28,6,16,70,92],
-[41,41,26,56,83,40,80,70,33],
-[41,48,72,33,47,32,37,16,94,29],
-[53,71,44,65,25,43,91,52,97,51,14],
-[70,11,33,28,77,73,17,78,39,68,17,57]]
-#[91,71,52,38,17,14,91,43,58,50,27,29,48],
-#[63,66,4,68,89,53,67,30,73,16,69,87,40,31],
-#[4,62,98,27,23,9,70,98,73,93,38,53,60,4,23]]
 
 t0 = time.time()
 answer = max_sum(grid, verbose=True)
