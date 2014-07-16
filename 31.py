@@ -13,14 +13,18 @@ def add(comb):
 	s = 0
 	for i in range(len(coins)):
 		s += coins[i]*comb[i]
-	if s == 200:
-		return True
-	else:
-		return False
+	return s
 
 
 comb = [0,1,1,2,0,1,1,3]
-assert add(comb), "Adding function is incorrect."
+assert add(comb) == 200, "Adding function is incorrect."
 
 max_inds = [200/coin for coin in coins]
 # each of this is the maximum number of each coin needed.
+
+# My first idea is to see how many of the largest coin add up to the first. If
+# there is any remainder, then find the next largest denomination that can go
+# in, see how many are left, until we find the magic number.
+
+# The next step is tricky. I think the answer is to replace large coins with
+# smaller coins.
